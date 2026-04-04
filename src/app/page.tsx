@@ -1,3 +1,4 @@
+import StatusColumn from "@/components/StatusColumn";
 import TaskInput from "../components/TaskInput";
 import TaskList from "../components/TaskList";
 
@@ -9,7 +10,12 @@ export default function Home() {
         </h1>
 
         <TaskInput/>
-        <TaskList />
+        <div>
+          <StatusColumn status="todo" title="Todo"/>
+          <StatusColumn status="progress" title="In Progress"/>
+          <StatusColumn status="done" title="Completed"/>
+        </div>
+      
     </main>
   );
 }
