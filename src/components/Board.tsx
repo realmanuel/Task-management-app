@@ -1,14 +1,14 @@
 "use client"
 
 import { DndContext } from "@dnd-kit/core"
-import { useTaskStore } from "@/store/taskStore"
+import { useTaskStore } from "../store/taskStore"
 import StatusColumn from "./StatusColumn"
 
-    export default function Board() {
+export default function Board() {
 
     const updateStatus = useTaskStore((s) => s.updateStatus)
 
-function handleDragEnd(event:any){
+    function handleDragEnd(event:any){
 
         const {active, over} = event
 

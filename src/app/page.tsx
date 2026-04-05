@@ -1,6 +1,7 @@
 import StatusColumn from "@/components/StatusColumn";
 import TaskInput from "../components/TaskInput";
 import TaskList from "../components/TaskList";
+import Board from "../components/Board";
 
 export default function Home() {
   return (
@@ -10,11 +11,8 @@ export default function Home() {
         </h1>
 
         <TaskInput/>
-        <div>
-          <StatusColumn status="todo" title="Todo"/>
-          <StatusColumn status="progress" title="In Progress"/>
-          <StatusColumn status="done" title="Completed"/>
-        </div>
+
+        < Board/>
       
     </main>
   );
