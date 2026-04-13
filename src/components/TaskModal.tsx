@@ -46,7 +46,7 @@ export default function TaskModal({ id, currentTitle }: Props) {
 
                 <button
                 onClick={save}
-                className="bg-secondary text-white px-3 py-1 rounded"
+                className="bg-secondary text-green px-3 py-1 rounded"
                 >
                 Save
                 </button>

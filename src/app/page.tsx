@@ -1,6 +1,4 @@
-import StatusColumn from "@/components/StatusColumn";
 import TaskInput from "../components/TaskInput";
-import TaskList from "../components/TaskList";
 import Board from "../components/Board";
 
 export default function Home() {
