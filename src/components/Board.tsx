@@ -1,7 +1,13 @@
 "use client"
 
 import { useState } from "react"
-import { DndContext, DragEndEvent, DragStartEvent, DragOverlay } from "@dnd-kit/core"
+import {
+    DndContext,
+    DragEndEvent,
+    DragOverEvent,
+    DragStartEvent,
+    DragOverlay,
+} from "@dnd-kit/core"
 import { useTaskStore } from "../store/taskStore"
 import StatusColumn from "./StatusColumn"
 import TaskCard from "./TaskCard"
@@ -10,46 +16,75 @@ export default function Board() {
 
     const [activeId, setActiveId] = useState<string | null>(null)
     const updateStatus = useTaskStore((s) => s.updateStatus)
+    const reorderTask = useTaskStore((s) => s.reorderTask)
     const tasks = useTaskStore((s) => s.tasks)
 
     function handleDragStart(event: DragStartEvent) {
         setActiveId(event.active.id as string)
     }
 
-    function handleDragEnd(event: DragEndEvent){
+    function handleDragOver(event: DragOverEvent) {
+        const { active, over } = event
 
-        setActiveId(null)
+        if (!over || active.id === over.id) return
 
-        const {active, over} = event
+        const activeTask = tasks.find((task) => task.id === active.id)
+        const overTask = tasks.find((task) => task.id === over.id)
 
-        if(!over) return
+        if (!activeTask || !overTask) return
+        if (activeTask.status !== overTask.status) return
 
-        const taskId = active.id
-        const newStatus = over.id
-
-        updateStatus(taskId as string, newStatus as "todo" | "progress" | "done")
+        reorderTask(active.id as string, over.id as string)
     }
 
-    return(
-        <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+    function handleDragEnd(event: DragEndEvent) {
+        setActiveId(null)
 
-        <div className="grid grid-cols-3 gap-6">
+        const { active, over } = event
 
-            <StatusColumn status="todo" title="Todo"/>
+        if (!over) return
 
-            <StatusColumn status="progress" title="In Progress"/>
+        const activeTask = tasks.find((task) => task.id === active.id)
+        if (!activeTask) return
 
-            <StatusColumn status="done" title="Completed"/>
+        let newStatus: "todo" | "progress" | "done" | null = null
 
-        </div>
+        if (over.id === "todo" || over.id === "progress" || over.id === "done") {
+            newStatus = over.id
+        } else {
+            const overTask = tasks.find((task) => task.id === over.id)
+            if (overTask) newStatus = overTask.status
+        }
 
-        <DragOverlay>
-            {activeId ? (
-                <TaskCard
-                    {...tasks.find((task) => task.id === activeId)!}
-                />
-            ) : null}
-        </DragOverlay>
+        if (!newStatus || newStatus === activeTask.status) return
+
+        updateStatus(active.id as string, newStatus)
+    }
+
+    return (
+        <DndContext
+            onDragStart={handleDragStart}
+            onDragOver={handleDragOver}
+            onDragEnd={handleDragEnd}
+        >
+
+            <div className="grid grid-cols-3 gap-6">
+
+                <StatusColumn status="todo" title="Todo" />
+
+                <StatusColumn status="progress" title="In Progress" />
+
+                <StatusColumn status="done" title="Completed" />
+
+            </div>
+
+            <DragOverlay>
+                {activeId ? (
+                    <TaskCard
+                        {...tasks.find((task) => task.id === activeId)!}
+                    />
+                ) : null}
+            </DragOverlay>
 
         </DndContext>
     )
